@@ -3,7 +3,10 @@ from nltk.corpus import stopwords
 from nltk import pos_tag
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from yelpapi import YelpAPI
+from collections import Counter
+import string
 import pandas as pd
+
 
 api_key = "hy8_mc7NcYkgqLW2pfIeJMN3BO51gZCsNvBKbJfMfo3qWlVFet1y5L1C6eH1Gv4lOaYwsdPHiCx5hTShxqMBwKA4WT-XK4KbUcaZ3PhPTN84QNcwGXBURWLIwb82ZHYx"
 yelp_api = YelpAPI(api_key)
@@ -95,17 +98,20 @@ for i in range(length):
         review_texts = review_df["text"].tolist()
         for text in review_texts:
             tokens = nltk.word_tokenize(text)
+            tokens = [token for token in tokens if token not in string.punctuation]
             tokens_without_stopwords = [token for token in tokens if token.lower() not in stop_words]
             pos_tags = pos_tag(tokens_without_stopwords)
             review_lists[i].extend(pos_tags)
 
             sentiment = analyzer.polarity_scores(text)
+            print(f"Restaurant: {id_for_review}")
             print(f"Review Text: {text}")
             print("\n")
             print(f"Tokens: {tokens}")
             print(f"Tokens without Stop Words: {tokens_without_stopwords}")
             print(f"POS Tags: {pos_tags}")
             print("\n")
+
             print(f"Sentiment - Positive: {sentiment['pos']}, Negative: {sentiment['neg']}, Neutral: {sentiment['neu']}, Compound: {sentiment['compound']}")
             print()
 
@@ -118,6 +124,12 @@ for i in range(length):
 for i, review_list in enumerate(review_lists, start=1):
     print(f"\nReview List {i}:", review_list)
     
+    all_tokens = [token for token, tag in pos_tags]
+    word_counts = Counter(all_tokens)
+    sorted_words = sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
+    top_words = sorted_words[:5]
 
-
-
+    print("Top words and their occurrences")
+    for word, count in top_words:
+        print(f"{word}: {count} occurences")
+        

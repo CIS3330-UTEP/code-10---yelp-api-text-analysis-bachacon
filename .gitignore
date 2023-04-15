@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# PDF
+Lecture_20_Text_Analysis.pdf
+Lecture_21_Data_retrieval_and_analysis_using_api.pdf
+
 # C extensions
 *.so
 
